@@ -36,26 +36,30 @@ sorted = List.keysort(freq, 1) #takes the 2nd element in the tuple and sort the 
 huffmanTree(sorted)
 end
 
-def huffmanTree([{tree, _}]) do tree end
-def huffmanTree([{c1, f1}, {c2, f2} | t]) do
-huffmanTree(insert({{c1, c2}, f1 + f2}, t))
+
+def huffmanTree([{tree, _}]) do tree end #top node
+def huffmanTree([{t1, f1}, {t2, f2} | t]) do
+huffmanTree(insert({{t1, t2}, f1 + f2}, t)) #bygger trädet här mha rekursiv funktion
 end
 
-def insert({c1, f1}, []) do [{c1, f1}] end   #the last entry in the tree, at the top
-def insert({c1, f1}, [{c2, f2} | rest]) when f1 < f2 do
-  [{c1, f1}, {c2, f2} | rest]
+def insert({t1, f1}, []) do [{t1, f1}] end   #the last entry in the tree, at the top
+def insert({t1, f1}, [{t2, f2} | rest]) when f1 < f2 do
+  [{t1, f1}, {t2, f2} | rest]
 end
-def insert({c1, f1}, [{c2, f2} | rest]) do
-  [{c2, f2} | insert({c1, f1}, rest)]
+def insert({t1, f1}, [{t2, f2} | rest]) do
+  [{t2, f2} | insert({t1, f1}, rest)]
 end
 
 #return the frequency of each cahr in sample
+#för att skicka med två parametrar
 def freq(sample)do
   freq(sample,[])
 end
+#basfallet, när listan är tom och vi gått igenom alla karaktärer
 def freq([], freq) do
   freq
 end
+#anropa update
 def freq([char | rest], freq)do
   freq(rest, update(char, freq))
 end
@@ -65,8 +69,9 @@ end
 def update(char,[]) do
   [{char, 1}]
 end
-def update(char, [{char, n} | freq])do
-  [{char, n + 1} | freq]
+#om matchar char med char, plussa på tupeln
+def update(char, [{char, f} | freq])do
+  [{char, f + 1} | freq]
 end
 def update(char, [elem | freq])do
   [elem | update(char, freq)]
@@ -78,9 +83,9 @@ end
  end
 
  # Traverse the Huffman tree and build a binary encoding for each character.
- def codes({left, right}, sofar) do
-   l = codes(left, [0 | sofar])
-   r = codes(right, [1 | sofar])
+ def codes({left, right}, path) do
+   l = codes(left, [0 | path])
+   r = codes(right, [1 | path])
    l ++ r
  end
 
